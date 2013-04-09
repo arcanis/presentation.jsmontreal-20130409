@@ -1,11 +1,43 @@
-title: Conception
+title: Conception du jeu
+class: segue dark
+
+---
+
+title: Composants
 class: fill
 
 ![](images/conception-1.png)
 
 ---
 
-title: Conception ... avec SWAT
+title: Composants ... avec SWAT
+class: fill
+
+![](images/conception-2.png)
+
+---
+
+title: SWAT
+
+SWAT est un framework de développement de jeux HTML5
+
+- Conçu pour fournir les briques nécessaires à Voxplode
+
+- Utilisable également pour simplifier d'autres types d'application
+
+Fonctionnalités diverses :
+
+- Interfaces de contrôle clavier / souris
+
+- Simplification de la gestion de threads (workers)
+
+- Implémentation d'un shell avancé (pipelining)
+
+Repository sur github : [arcanis/SWAT](https://github.com/arcanis/SWAT)
+
+---
+
+title: Composants ... avec SWAT
 class: fill
 
 ![](images/conception-2.png)
@@ -55,11 +87,11 @@ class: big
 
 <br />
 
-- Aléatoire
+- Aléatoire, mais pas trop
 
-- Mais pas trop
+- Permet de générer des valeurs cohérentes en tout point via interpolation
 
-- Permet de générer des valeurs cohérentes à l'échelle d'un monde
+- Peut générer des bruits en 2D (cf examples), mais aussi 3D (N-dimensions, en fait)
 
 ---
 
@@ -68,10 +100,10 @@ title: Génération d'une région
 - Pour chaque X
   - Pour chaque Y
     - Pour chaque Z
-      - Calcul de trois bruits de perlin :
-        - **roughness**
-        - **detail**
-        - **elevation**
+      - Calcul de trois bruits de perlin 3D :
+        - roughness
+        - detail
+        - elevation
       - On les combine, et applique un facteur sur la hauteur
       - En fonction de l'unique valeur obtenue :
         - Si dans l'intervalle [0;A[, le bloc est DIRT
@@ -123,13 +155,13 @@ class: segue dark
 
 title: Performances
 
-- Trop de workers tuent les perfs du thread principal.
+- Trop de workers tue les perfs du thread principal
 
-- L'utilisation des transferable objects n'est pas négligeable, et à moindre coût.
+- L'utilisation des transferables n'est pas négligeable, et à moindre coût
 
-- Dans le cas de Three.js, utiliser des BufferGeometry est une bonne idée.
+- Dans le cas de Three.js, utiliser des BufferGeometry est une bonne idée
 
-- Firefox est toujours très à la traine par rapport à Chrome en terme de performances.
+- Firefox est toujours très à la traine par rapport à Chrome en terme de performances
 
 ---
 
@@ -147,12 +179,12 @@ title: A venir
 
 - Du son !
 
-- Rayon de collision.
+- Rayon de collision
 
-- Un monde plus joli.
+- Un monde plus joli
 
-- Un meilleur texturage.
+- Un meilleur texturage
 
-- Des armes pour tout casser.
+- Des armes pour tout casser
 
 - Etc, etc, etc

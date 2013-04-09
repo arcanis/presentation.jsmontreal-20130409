@@ -43,10 +43,20 @@ URL: https://code.google.com/p/io-2012-slides
 </slide>
 
 
+<slide class="segue dark" >
+  
+    <aside class="gdbar"><img src="images/google_developers_icon_128.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Conception du jeu</h2>
+      <h3></h3>
+    </hgroup>
+  
+</slide>
+
 <slide class="fill" >
   
     <hgroup>
-      <h2>Conception</h2>
+      <h2>Composants</h2>
       <h3></h3>
     </hgroup>
     <article ><p><img alt="" src="images/conception-1.png" /></p></article>
@@ -56,7 +66,48 @@ URL: https://code.google.com/p/io-2012-slides
 <slide class="fill" >
   
     <hgroup>
-      <h2>Conception ... avec SWAT</h2>
+      <h2>Composants ... avec SWAT</h2>
+      <h3></h3>
+    </hgroup>
+    <article ><p><img alt="" src="images/conception-2.png" /></p></article>
+ 
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2>SWAT</h2>
+      <h3></h3>
+    </hgroup>
+    <article ><p>SWAT est un framework de développement de jeux HTML5</p>
+<ul>
+<li>
+<p>Conçu pour fournir les briques nécessaires à Voxplode</p>
+</li>
+<li>
+<p>Utilisable également pour simplifier d'autres types d'application</p>
+</li>
+</ul>
+<p>Fonctionnalités diverses :</p>
+<ul>
+<li>
+<p>Interfaces de contrôle clavier / souris</p>
+</li>
+<li>
+<p>Simplification de la gestion de threads (workers)</p>
+</li>
+<li>
+<p>Implémentation d'un shell avancé (pipelining)</p>
+</li>
+</ul>
+<p>Repository sur github : <a href="https://github.com/arcanis/SWAT">arcanis/SWAT</a></p></article>
+ 
+</slide>
+
+<slide class="fill" >
+  
+    <hgroup>
+      <h2>Composants ... avec SWAT</h2>
       <h3></h3>
     </hgroup>
     <article ><p><img alt="" src="images/conception-2.png" /></p></article>
@@ -126,13 +177,13 @@ URL: https://code.google.com/p/io-2012-slides
 <p><br /></p>
 <ul>
 <li>
-<p>Aléatoire</p>
+<p>Aléatoire, mais pas trop</p>
 </li>
 <li>
-<p>Mais pas trop</p>
+<p>Permet de générer des valeurs cohérentes en tout point via interpolation</p>
 </li>
 <li>
-<p>Permet de générer des valeurs cohérentes à l'échelle d'un monde</p>
+<p>Peut générer des bruits en 2D (cf examples), mais aussi 3D (N-dimensions, en fait)</p>
 </li>
 </ul></article>
  
@@ -148,10 +199,10 @@ URL: https://code.google.com/p/io-2012-slides
 <li>Pour chaque X</li>
 <li>Pour chaque Y<ul>
 <li>Pour chaque Z</li>
-<li>Calcul de trois bruits de perlin :<ul>
-<li><strong>roughness</strong></li>
-<li><strong>detail</strong></li>
-<li><strong>elevation</strong></li>
+<li>Calcul de trois bruits de perlin 3D :<ul>
+<li>roughness</li>
+<li>detail</li>
+<li>elevation</li>
 </ul>
 </li>
 <li>On les combine, et applique un facteur sur la hauteur</li>
@@ -242,16 +293,16 @@ URL: https://code.google.com/p/io-2012-slides
     </hgroup>
     <article ><ul>
 <li>
-<p>Trop de workers tuent les perfs du thread principal.</p>
+<p>Trop de workers tue les perfs du thread principal</p>
 </li>
 <li>
-<p>L'utilisation des transferable objects n'est pas négligeable, et à moindre coût.</p>
+<p>L'utilisation des transferables n'est pas négligeable, et à moindre coût</p>
 </li>
 <li>
-<p>Dans le cas de Three.js, utiliser des BufferGeometry est une bonne idée.</p>
+<p>Dans le cas de Three.js, utiliser des BufferGeometry est une bonne idée</p>
 </li>
 <li>
-<p>Firefox est toujours très à la traine par rapport à Chrome en terme de performances.</p>
+<p>Firefox est toujours très à la traine par rapport à Chrome en terme de performances</p>
 </li>
 </ul></article>
  
@@ -288,16 +339,16 @@ URL: https://code.google.com/p/io-2012-slides
 <p>Du son !</p>
 </li>
 <li>
-<p>Rayon de collision.</p>
+<p>Rayon de collision</p>
 </li>
 <li>
-<p>Un monde plus joli.</p>
+<p>Un monde plus joli</p>
 </li>
 <li>
-<p>Un meilleur texturage.</p>
+<p>Un meilleur texturage</p>
 </li>
 <li>
-<p>Des armes pour tout casser.</p>
+<p>Des armes pour tout casser</p>
 </li>
 <li>
 <p>Etc, etc, etc</p>
