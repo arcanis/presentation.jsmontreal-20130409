@@ -1,383 +1,158 @@
-title: Frameworks actuels
-subtitle: De nombreux paradigmes
+title: Conception
+class: fill
+
+![](images/conception-1.png)
+
+---
+
+title: Conception ... avec SWAT
+class: fill
+
+![](images/conception-2.png)
+
+---
+
+title: Concept: Thread pool
 class: big
 
-- Model / View (Backbone)
+![](images/threadpool.png)
 
-- Routing (Ember)
+<br />
 
-- Layout (ExtJS)
+- Les tâches sont empilées
 
-- Knockout, Batman, Spine, ...
+- Dès qu'un worker est 'au repos', on lui confie la tâche
+
+- Il travaille dessus, et nous notifie le résultat quand il a fini
+
+- Après quoi il passe à la prochaine tâche disponible
 
 ---
 
-title: Problèmes récurrents
+title: Workflow de génération
 class: big
 
-- Chacun introduit de nouveaux concepts
+- Le game state charge les régions à proximité
 
-- Courbe d'apprentissage écrasante
+- Il demande au générateur de créer celles qui n'existent pas
 
-- Manque de convention de conception
+- Le générateur créé une nouvelle task dans la pool pour chaque région
 
-- Complexe à configurer ou étendre
+- Une fois la task finie, le polygonizer la catch et créé une nouvelle task
 
----
+- La polygonisation finie, le game state injecte le modèle
 
-title: Angular à la rescousse
+<br />
 
-- Chacun introduit de nouveaux concepts
-  <div style="color:red">Angular étend principalement l'HTML</div>
-
-- Courbe d'apprentissage écrasante
-  <div style="color:red">Peu de concepts nouveaux</div>
-
-- Manque de convention de conception
-  <div style="color:red">'The angular way' est clairement définie</div>
-
-- Complexe à configurer ou étendre
-  <div style="color:red">Très peu de code pour ajouter des fonctionnalités</div>
+![](images/generation-workflow.png)
 
 ---
 
-title: Concepts clefs
+title: Concept: Bruit de perlin
 class: big
 
-- HTML étendu
+![](images/perlin.jpg)
 
-- DOM scoppé
+<br />
 
-- Mise à jour automatique
+- Aléatoire
 
-- Injection de dépendances
+- Mais pas trop
+
+- Permet de générer des valeurs cohérentes à l'échelle d'un monde
 
 ---
 
-title: HTML étendu
+title: Génération d'une région
+
+- Pour chaque X
+  - Pour chaque Y
+    - Pour chaque Z
+      - Calcul de trois bruits de perlin :
+        - **roughness**
+        - **detail**
+        - **elevation**
+      - On les combine, et applique un facteur sur la hauteur
+      - En fonction de l'unique valeur obtenue :
+        - Si dans l'intervalle [0;A[, le bloc est DIRT
+        - Si dans l'intervalle ]A;B[, le bloc est GRASS
+        - Si dans l'intervalle [C;1[, le bloc est AIR, ou WATER (niveau de la mer)
+
+---
+
+title: Génération d'une région : soucis actuels
+
+- Relativement lent (de une demie seconde à une seconde par région)
+
+- Géologiquement curieux, par moment (plate-formes volantes ?)
+
+- Pas de structures (arbres, maisons, etc)
+
+- Pas de caves
+
+---
+
+title: Polygonisation d'une région
+
+Pas rentrer dans les détails, cf [article de Paul Bourke](http://paulbourke.net/geometry/polygonise/) sur le sujet.
+
+Dans les grandes lignes, on récupère huit valeurs à partir d'un unique voxel. En fonction de ces valeurs, on extrait les faces à afficher.
+
+![](images/marching-cubes.png)
+
+Le procédé se nomme Marching Cubes.
+
+Quelques modifications personnalisées à l'algorithme pour des cas supplémentaires.
+
+---
+
+title: Polygonisation d'une région : soucis actuels
+
+- Particulièrement lent (jusqu'à 4s pour polygoniser une région)
+
+- Génère beaucoup de polygones (beaucoup plus que dans Minecraft)
+
+- Soucis sur l'UV mapping des faces
+
+---
+
+title: Notes de développement
 class: segue dark
 
 ---
 
-title: Variables
+title: Performances
 
-<pre class="prettyprint" data-lang="html">
-&lt;h1&gt;{{ name }}&lt;/h1&gt;
-&lt;h2&gt;By {{ author }}&lt;/h2&gt;
-&lt;p&gt;{{ content }}&lt;/p&gt;
-</pre>
+- Trop de workers tuent les perfs du thread principal.
 
-<pre class="prettyprint" data-lang="html">
-&lt;ul&gt;
-  &lt;li&gt;{{ price }} excluding taxes&lt;/li&gt;
-  &lt;li&gt;{{ price * 1.197 }} including taxes&lt;/li&gt;
-&lt;/ul&gt;
-</pre>
+- L'utilisation des transferable objects n'est pas négligeable, et à moindre coût.
+
+- Dans le cas de Three.js, utiliser des BufferGeometry est une bonne idée.
+
+- Firefox est toujours très à la traine par rapport à Chrome en terme de performances.
 
 ---
 
-title: Logical blocks
+title: Futur
 
-<pre class="prettyprint" data-lang="html">
-&lt;div&gt;Hi {{ name }} !&lt;/div&gt;
+- On veut WebCL ! Cela permettrait d'hautement paralléliser la génération des régions, et potentiellement leur polygonisation.
 
-&lt;div ng-show="name == 'maël'"&gt;
-  Did you know that you're especially awesome ?
-&lt;div&gt;
-</pre>
+- La Pointer Lock API est bien faite. Mais Firefox requiert d'être en fullscreen.
 
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-repeat="post in posts"&gt;
-  &lt;h1&gt;{{ post.name }}&lt;/h1&gt;
-  &lt;h2&gt;By {{ post.author }}&lt;/h2&gt;
-  &lt;p&gt;{{ post.content }}&lt;/p&gt;
-&lt;/div&gt;
-</pre>
+- Curieux de voir si Asm.js améliorerait les performances de la génération / polygonisation, à défaut de WebCL.
 
 ---
 
-title: Filtres
+title: A venir
 
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-repeat="post in posts"&gt;
-  &lt;h1&gt;{{ post.name }}&lt;/h1&gt;
-  &lt;h2&gt;Published on {{ post.publish_date | date }} by {{ post.author }}&lt;/h2&gt;
-  &lt;p&gt;{{ post.content }}&lt;/p&gt;
-&lt;/div&gt;
-</pre>
+- Du son !
 
-<pre class="prettyprint" data-lang="html">
-&lt;h1&gt;Some names containing '{{ query | uppercase }}'&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li ng-repeat="name in names | filter:query | limitTo:10"&gt;
-    {{ name }}
-  &lt;/li&gt;
-&lt;/ul&gt;
-</pre>
+- Rayon de collision.
 
-Pas énormément de filtres standards, cependant.
+- Un monde plus joli.
 
----
+- Un meilleur texturage.
 
-title: DOM scoppé
-class: segue dark
+- Des armes pour tout casser.
 
----
-
-title: Contrôleur
-
-Chaque élément peut avoir un contrôleur associé
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  $scope.users = [ 'jean', 'jules', 'sylvain' ];
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;ul ng-controller="MyController"&gt;
-  &lt;li ng-repeat="user in users"&gt;
-    {{ user }}
-  &lt;/li&gt;
-&lt;/ul&gt;
-</pre>
-
----
-
-title: Sous-contrôleurs
-
-Chaque élément peut avoir son propre contrôleur, y compris les blocs logiques.
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  $scope.users = [ 'jean', 'jules', 'sylvain' ];
-}
-
-function MySubController( $scope ) {
-  $scope.rnd = Math.random( );
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;ul ng-controller="MyController"&gt;
-  &lt;li ng-repeat="user in users" ng-controller="MySubController"&gt;
-    {{ user }} picked the value {{ rnd }}
-  &lt;/li&gt;
-&lt;/ul&gt;
-</pre>
-
----
-
-title: Mise à jour automatique
-class: segue dark
-
----
-
-title: Modèles
-
-<pre class="prettyprint" data-lang="html">
-&lt;input type="text" ng-model="username" /&gt;
-&lt;div&gt;Vous appelez-vous {{ username }} ?&lt;/div&gt;
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;input type="text" ng-model="query" /&gt;
-
-&lt;h1&gt;Names matching '{{ query | uppercase }}'&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li ng-repeat="name in names | filter:query"&gt;
-    {{ name }}
-  &lt;/li&gt;
-&lt;/ul&gt;
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;input type="number" ng-model="price" /&gt;
-&lt;div&gt;{{ price | currency }} excluding taxes&lt;/div&gt;
-&lt;div&gt;{{ price * 1.197 | currency }} including taxesHT&lt;/div&gt;
-</pre>
-
----
-
-title: Scopes
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  $scope.value = 0;
-
-  $scope.add = function ( ) {
-    $scope.value += 1;
-  };
-
-  $scope.sub = function ( ) {
-    $scope.value -= 1;
-  };
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-controller="MyController"&gt;
-  &lt;input type="button" ng-click="add()" &gt;
-  &lt;input type="button" ng-click="sub()" &gt;
-  &lt;div&gt;Current value : {{ value }}&gt;
-&lt;/div&gt;
-</pre>
-
----
-
-title: $Watch !
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  $scope.$watch( 'text', function ( ) {
-    $scope.hash = md5( $scope.text );
-  } );
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-controller="MyController"&gt;
-  &lt;input type="text" ng-model="text" /&gt;
-  &lt;div&gt;MD5 hash : {{ hash }}&lt;/div&gt;
-&lt;/div&gt;
-</pre>
-
-Pour cet usage, notez qu'un filtre aurait été suffisant :)
-
-<pre class="prettyprint" data-lang="html">
-&lt;div&gt;
-  &lt;input type="text" ng-model="text" /&gt;
-  &lt;div&gt;MD5 hash : {{ text | md5 }}&lt;/div&gt;
-&lt;/div&gt;
-</pre>
-
----
-
-title: Avertissement
-
-<span style="color:red">Ce code ne fonctionne pas !</span>
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  window.setInterval( function ( ) {
-    $scope.value += 1;
-  }, 1000 );
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-controller="MyController"&gt;
-  &lt;div&gt;Current value : {{ value }}&lt;/&gt;
-&lt;/div&gt;
-</pre>
-
-La vue ne sera pas modifiée.
-
----
-
-title: Injection de dépendances
-class: segue dark
-
----
-
-title: Injections dans les controlleurs
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope ) {
-  // ...
-}
-</pre>
-
-Angular a analysé le code de `MyController` et déduit que le service nommé `$scope` était requis.
-
-Autre façon de faire :
-
-<pre class="prettyprint" data-lang="javascript">
-var MyController = [ '$scope', function ( $scope ) {
-  // ...
-} ];
-</pre>
-
-Ceci évite qu'uglifyjs ou autre ne brise les noms des arguments.
-
----
-
-title: Quelques services existants
-
-- `$scope`
-
-- `$timeout`, pour émuler `window.setTimeout`
-
-- `$http`, pour les requêtes Ajax
-
-- `$location`, pour l'URL actuelle
-
-- ...
-
----
-
-title: Définir son propre service
-
-Trois façons, trois noms :
-
-- `app.service(...)`
-
-- `app.factory(...)`
-
-- `app.provider(...)`
-
-Chacun plus complexe mais plus puissant que le précédent.
-
-Référez-vous à [ce gist](https://gist.github.com/Mithrandir0x/3639232) pour un exemple.
-
----
-
-title: The Angular Way
-class: segue dark nobackground
-
----
-
-title: Déclaration du service des Quotes
-
-<pre class="prettyprint" data-lang="javascript">
-Application.provider( 'quotes', function ( ) {
-    this.$get = [ '$http', function ( $http ) { return {
-        items : [ ],
-        fetch : function ( ) {
-            $http( {
-                method : 'GET', '/quotes.json'
-            } ).then( function ( res ) {
-                this.items // we want to keep the same array !
-				  .splice( 0, this.items.length )
-				  .push.apply( this.items, res.data.items );
-            }.bind( this ), function ( res ) {
-                console.error( res.data.error );
-            } );
-        }
-    }; } ];
-} );
-</pre>
-
----
-
-title: Utilisation du service
-
-<pre class="prettyprint" data-lang="javascript">
-function MyController( $scope, quotes ) {
-  $scope.quotes = quotes.items;
-  $scope.refresh = function ( ) {
-    quotes.fetch( );
-  };
-}
-</pre>
-
-<pre class="prettyprint" data-lang="html">
-&lt;div ng-controller="MyController"&gt;
-  &lt;button ng-click="refresh()" value="Refresh quotes" /&gt;
-  &lt;ul&gt;
-    &lt;li ng-repeat="quote in quotes"&gt;
-      "{{ quote.text }}" - by {{ quote.author }}
-    &lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;
-</pre>
+- Etc, etc, etc

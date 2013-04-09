@@ -1,9 +1,9 @@
 var SLIDE_CONFIG = {
   // Slide settings
   settings: {
-    title: 'Angular.js',
-    subtitle: 'Etendre l\'HTML au profil des applications enrichies',
-    eventTitle: 'JS Montreal 2013/03/12',
+    title: 'Voxplode',
+    subtitle: 'HTML5 au service du gaming',
+    eventTitle: 'JS Montreal 2013/04/09',
     useBuilds: true,
     usePrettify: true,
     enableSlideAreas: true,
